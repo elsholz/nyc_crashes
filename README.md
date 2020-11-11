@@ -3,3 +3,6 @@ Data from [here](https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Colli
 
 Map of killed or injured cyclists:
 ![map of bike crashes](./crashes_bicycle_heatmap.png)
+
+# start docker containers
+`docker-compose up`
