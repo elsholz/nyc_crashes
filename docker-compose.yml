@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    ports:
+      - 2181:2181
+    volumes:
+      - zookeeper_data:/bitnami
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: bitnami/kafka:latest
+    ports:
+      - 9092:9092
+    volumes:
+      - kafka_data:/bitnami
+    environment:
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper
+  mongodb:
+    image: bitnami/mongodb:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/bitnami/mongodb
+
+volumes:
+  zookeeper_data:
+  kafka_data:
+  mongodb_data:
