@@ -1,6 +1,10 @@
 from pymongo import MongoClient
 from kafka import KafkaConsumer, KafkaProducer
 from datetime import datetime
+import pandas as pd
+import re
+from pathlib import Path
+import csv
 
 
 def send_to_kafka(topic, limit=None):
@@ -25,7 +29,7 @@ def send_to_kafka(topic, limit=None):
 
 def process_topic(topic, types, limit=None):
     errors = {}
-    with  MongoClient("mongodb://localhost:27017") as client:
+    with MongoClient("mongodb://localhost:27017") as client:
         target_db = client['nyc_crashes'][topic]
         if topic == 'crashes':
             db = client['nyc_crashes']
@@ -37,25 +41,25 @@ def process_topic(topic, types, limit=None):
         print(f'Started {topic} Consumer process.')
 
         for counter, row in enumerate(consumer):
-            row = row.value.decode('utf-8').split(',')
+            row = row.value.decode('utf-8')
 
-            if counter and not counter % 100000:
+            if counter and not counter % 1000 :
                 with open(f'log{topic}', 'w') as fout:
                     fout.write(str(errors))
-                print(f'Kafka → MongoDB: Read {counter} lines from Kafka topic {topic}')
-            res = {}
-            for idx, (db_field, field_type) in enumerate(types.items()):
-                try:
-                    if row_data := row[idx]:
-                        res[db_field] = field_type.__call__(row_data) if not isinstance(row_data,
-                                                                                        field_type) else row_data
-                    else:
+                print(f'Kafka → MongoDB: Read {counter} lines from Kafka topic {topic}.')
+            for line in csv.reader([row]):
+                res = {}
+                for idx, (db_field, field_type) in enumerate(types.items()):
+                    try:
+                        if row_data := line[idx]:
+                            res[db_field] = field_type.__call__(row_data) if not isinstance(row_data,
+                                                                                            field_type) else row_data
+                        else:
+                            res[db_field] = None
+                    except Exception as e:
                         res[db_field] = None
-                except Exception as e:
-                    res[db_field] = None
-                    errors[type(e)] = errors.get(type(e), 0) + 1
+                        errors[type(e)] = errors.get(type(e), 0) + 1
 
-            # make sure the document is identifiable
             if res['_id']:
                 try:
                     if topic == 'crashes':
@@ -80,7 +84,7 @@ def process_topic(topic, types, limit=None):
             else:
                 errors['No _id!!'] = errors.get('No _id!!', 0) + 1
             if limit and limit - 1 == counter:
-                print(f'Consumer for topic {topic} closed after {counter + 2} entries.')
+                print(f'Consumer for topic {topic} closed after {counter + 1} entries.')
                 consumer.close()
                 with open(f'log{topic}', 'w') as fout:
                     fout.write(str(errors))
@@ -96,6 +100,7 @@ def aggregate_data():
         kinds = ['pedestrians', 'cyclists', 'motorists']
 
         for crash in collection.find({}):
+            # TODO: remove
             crash['year'] = (date := datetime.strptime(crash['crash_date'], "%m/%d/%Y")).year
             crash['month'] = date.month
             crash['day'] = date.day
@@ -103,12 +108,13 @@ def aggregate_data():
             cm = crash['month']
             cd = crash['day']
 
+
             years[cy] = years.get(cy, [])
             years[cy].append((cm, cd, {
                 kind:
                     {
                         'injured': (i := crash[f'{kind}_injured']),
-                        'killed': (k := crash[f'{kind}_injured']),
+                        'killed': (k := crash[f'{kind}_killed']),
                         'sum': (i + k)
                     }
                 for kind in kinds
