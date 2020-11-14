@@ -3,22 +3,22 @@ from kafka import KafkaConsumer, KafkaProducer
 from datetime import datetime
 
 
-def send_to_kafka(topic):
+def send_to_kafka(topic, limit=None):
     print(f'Started {topic} Producer process.')   
     producer = KafkaProducer(bootstrap_servers=['localhost:9092'])
     
     with open((fn:=Path('data') / f'{topic}.csv')) as source:
         for counter, row in enumerate(source.readlines()):
-            #if counter >= 50000:
-            #    producer.close()
-            #    print(f'Producer for topic {topic} closed after {counter} entries.')
-            #    return counter - 1
+            if limit and counter >= limit:
+                producer.close()
+                print(f'Producer for topic {topic} closed after {counter+1} entries.')
+                return counter - 1
             if counter:
                 producer.send(f'nyc_{topic}', value=bytearray(row, encoding='utf-8'), key=bytearray(str(counter), encoding='utf-8'))
             if not counter % 100000 and counter:
                 print(f'CSV → Kafka: Read {counter} lines from {fn}.')
         producer.close()
-        print(f'Producer for topic {topic} closed after {counter} entries.')
+        print(f'Producer for topic {topic} closed after {counter+1} entries.')
         return counter - 1
 
 
@@ -72,7 +72,7 @@ def process_topic(topic, types, limit=None):
             else:
                 errors['No _id!!'] = errors.get('No _id!!', 0) + 1
             if limit and limit - 1 == counter:
-                print(f'Consumer for topic {topic} closed after {counter+1} entries.')
+                print(f'Consumer for topic {topic} closed after {counter+2} entries.')
                 consumer.close()
                 with open(f'log{topic}', 'w') as fout:
                     fout.write(str(errors))
