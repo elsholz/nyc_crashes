@@ -1,7 +1,7 @@
 schemas = {
     'vehicles': {
-        'unique_id': int,
         '_id': int,
+        'collision_id': int,
         'crash_date': str,
         'crash_time': str,
         'vehicle_id': str,
@@ -27,8 +27,8 @@ schemas = {
         'contributing_factor_2': str
     },
     'persons': {
-        'unique_id': int,
         '_id': int,
+        'collision_id': int,
         'crash_date': str,
         'crash_time': str,
         'person_id': str,
