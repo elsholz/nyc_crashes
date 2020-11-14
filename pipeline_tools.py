@@ -43,7 +43,7 @@ def process_topic(topic, types, limit=None):
         for counter, row in enumerate(consumer):
             row = row.value.decode('utf-8')
 
-            if counter and not counter % 1000 :
+            if counter and not counter % 100000:
                 with open(f'log{topic}', 'w') as fout:
                     fout.write(str(errors))
                 print(f'Kafka → MongoDB: Read {counter} lines from Kafka topic {topic}.')
