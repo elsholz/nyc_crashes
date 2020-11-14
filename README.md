@@ -5,4 +5,7 @@ Map of killed or injured cyclists:
 ![map of bike crashes](./crashes_bicycle_heatmap.png)
 
 # start docker containers
-`docker-compose up`
+`docker-compose up -d`
+
+# stop docker containers
+`docker-compose down`
