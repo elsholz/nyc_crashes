@@ -1,5 +1,3 @@
-import pandas as pd
-import ipywidgets as widgets
 import matplotlib.pyplot as plt
 from pylab import rcParams
 import folium
@@ -7,10 +5,11 @@ from pymongo import MongoClient
 from folium.plugins import HeatMap
 import numpy as np
 import matplotlib
-#rcParams['figure.figsize'] = 25, 13
-font = {'size'   : 18}
-matplotlib.rc('font', **font)
 import matplotlib.patches as mpatches
+
+rcParams['figure.figsize'] = 20, 12
+font = {'size': 18}
+matplotlib.rc('font', **font)
 
 with MongoClient('mongodb://localhost:27017/') as client:
     global database
@@ -28,8 +27,6 @@ def monthly(Jahr):
     y_values_injured = []
     y_values_killed = []
     for month in data:
-        injured = 0
-        killed = 0
         injured = data[month]['pedestrians']['injured'] + data[month]['cyclists']['injured'] + data[month]['motorists'][
             'injured']
         killed = data[month]['pedestrians']['killed'] + data[month]['cyclists']['killed'] + data[month]['motorists'][
@@ -38,7 +35,6 @@ def monthly(Jahr):
         y_values_killed += [killed]
 
     show_graph_injury(x_values, y_values_injured, y_values_killed)
-    return
 
 
 def monthly_sum(Jahr):
@@ -49,9 +45,6 @@ def monthly_sum(Jahr):
     y_values_cyclists = []
     y_values_motorists = []
     for month in data:
-        pedestrians = 0
-        cyclists = 0
-        motorists = 0
         pedestrians = data[month]['pedestrians']['sum']
         cyclists = data[month]['cyclists']['sum']
         motorists = data[month]['motorists']['sum']
@@ -60,12 +53,9 @@ def monthly_sum(Jahr):
         y_values_motorists += [motorists]
 
     show_graph_type(x_values, y_values_pedestrians, y_values_cyclists, y_values_motorists)
-    return
 
 
 def show_graph_injury(x_values, y_values_injured, y_values_killed):
-    data = crashes_by_year.find_one({"_id": '2020'})['by_month']
-
     labels = x_values
     y_values_injured = y_values_injured
     y_values_killed = y_values_killed
@@ -74,8 +64,8 @@ def show_graph_injury(x_values, y_values_injured, y_values_killed):
     width = 0.35  # the width of the bars
 
     fig, ax = plt.subplots()
-    rects1 = ax.bar(x - width/2, y_values_injured, width, label='Verletzte')
-    rects2 = ax.bar(x + width/2, y_values_killed, width, label='Todesfaelle')
+    rects1 = ax.bar(x - width/2, y_values_injured, width, label='Verletzte (in 10)', color='yellow')
+    rects2 = ax.bar(x + width/2, y_values_killed, width, label='Todesfaelle', color='red')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_ylabel('Anzahl Unfaelle')
@@ -98,8 +88,6 @@ def show_graph_injury(x_values, y_values_injured, y_values_killed):
     autolabel(rects2)
 
     fig.tight_layout()
-    
-    plt.figure(figsize=(20, 11))
 
     p1 = plt.bar(x_values, y_values_killed, color=(0.92, 0.07, 0.04))
     p2 = plt.bar(x_values, y_values_injured, bottom=y_values_killed, color=(0.90, 0.90, 0.00))
@@ -108,8 +96,6 @@ def show_graph_injury(x_values, y_values_injured, y_values_killed):
 
 
 def show_graph_type(x_values, y_values_pedestrians, y_values_cyclists, y_values_motorists):
-    plt.figure(figsize=(20, 11))
-
     p1 = plt.bar(x_values, y_values_motorists, color=(0.40, 0.40, 0.40))
     p2 = plt.bar(x_values, y_values_cyclists, bottom=y_values_motorists, color=(0.85, 0.85, 0.1))
     bottom_gold = [a + b for a, b in zip(y_values_cyclists, y_values_motorists)]
@@ -123,7 +109,6 @@ def show_graph_type(x_values, y_values_pedestrians, y_values_cyclists, y_values_
 
 def show_line_chart(damage='killed', kinds=['pedestrians', 'motorists', 'cyclists']):
     """Line chart of injuries per vehicle-class per month from 2013 to 2019"""
-    plt.figure(figsize=(20, 12))
     x = list(range(1, 13))
 
     for kind in kinds:
@@ -135,7 +120,7 @@ def show_line_chart(damage='killed', kinds=['pedestrians', 'motorists', 'cyclist
                     months[m] = mdata.get(kind, {}).get(damage, None)
             yn[year['_id']] = months
 
-        for y in sorted(yn, key=lambda x: int(x)):
+        for y in sorted(yn, key=lambda x: int(x))[1:]:
             months = yn[y]
             plt.plot(list(months.keys()), list(months.values()), linewidth=15, color={
                 'pedestrians': (1.0, 0.0, 0, 0.5),
@@ -144,17 +129,17 @@ def show_line_chart(damage='killed', kinds=['pedestrians', 'motorists', 'cyclist
             }[kind])
 
     green = mpatches.Patch(color='green', label='The red data')
-    yellow = mpatches.Patch(color='yellow', label='The red data')
+    red = mpatches.Patch(color='red', label='The red data')
     gray = mpatches.Patch(color='gray', label='The red data')
 
-    plt.legend(handles=[yellow, gray, green], labels=['pedestrians', 'motorists', 'cyclists'])
+    plt.legend(handles=[red, gray, green], labels=['pedestrians', 'motorists', 'cyclists'])
     plt.show()
 
 
 def show_stacked_victims():
     years = sorted([y['_id'] for y in crashes_by_year.find()], key=lambda x: int(x))
 
-    plt.figure(figsize=(20,12))
+    plt.figure(figsize=(20, 12))
     plt.stackplot(
         years, [
             [crashes_by_year.find_one({'_id': {'$eq': year}})['whole_year']['pedestrians']['sum'] for year in years],
