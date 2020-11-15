@@ -86,7 +86,7 @@ def show_graph_type(x_values, y_values_pedestrians, y_values_cyclists, y_values_
 
 def show_line_chart(damage='killed', kinds=['pedestrians', 'motorists', 'cyclists']):
     """Line chart of injuries per vehicle-class per month from 2013 to 2019"""
-    plt.figure(figsize=(20, 11))
+    plt.figure(figsize=(20, 12))
     x = list(range(1, 13))
 
     for kind in kinds:
@@ -111,6 +111,26 @@ def show_line_chart(damage='killed', kinds=['pedestrians', 'motorists', 'cyclist
     gray = mpatches.Patch(color='gray', label='The red data')
 
     plt.legend(handles=[yellow, gray, green], labels=['pedestrians', 'motorists', 'cyclists'])
+    plt.show()
+
+
+def show_stacked_victims():
+    years = sorted([y['_id'] for y in crashes_by_year.find()], key=lambda x: int(x))
+
+    plt.figure(figsize=(20,12))
+    plt.stackplot(
+        years, [
+            [crashes_by_year.find_one({'_id': {'$eq': year}})['whole_year']['pedestrians']['sum'] for year in years],
+            [crashes_by_year.find_one({'_id': {'$eq': year}})['whole_year']['cyclists']['sum'] for year in years],
+            [crashes_by_year.find_one({'_id': {'$eq': year}})['whole_year']['motorists']['sum'] for year in years],
+        ],
+        labels=['Pedestrians', 'Cyclists', 'Motorists'],
+        alpha=0.9,
+        colors=['yellow', 'green', 'lightgray']
+    )
+
+    # plt.legend(loc=2, fontsize='large')
+    plt.legend()
     plt.show()
 
 
