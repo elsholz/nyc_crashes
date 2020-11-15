@@ -62,7 +62,7 @@ def show_graph_injury(x_values, y_values_injured, y_values_killed):
     p2 = plt.bar(x_values, y_values_injured, bottom=y_values_killed, color=(0.90,0.90,0.00))
 
     plt.ylabel('Anzahl Unfaelle')
-    plt.title('Unfaelle pro Monat nach Art')
+    plt.title('Unfaelle pro Monat nach Art der Verletzung')
     plt.legend((p2[0], p1[0]), ('Verletze', 'Todesfaelle'))
     plt.show()
 
@@ -76,7 +76,7 @@ def show_graph_type(x_values, y_values_pedestrians, y_values_cyclists, y_values_
     p3 = plt.bar(x_values, y_values_pedestrians, bottom=bottom_gold, color=(0.10,0.8,0.10))
     
     plt.ylabel('Anzahl Unfaelle')
-    plt.title('Unfaelle pro Monat nach Art')
+    plt.title('Unfaelle pro Monat nach Mobilitaetstyp')
     plt.legend((p3[0], p2[0], p1[0]), ('Fussgaenger', 'Fahrradfahrer', 'Personen in Fahrzeugen'))
     plt.show()
 
