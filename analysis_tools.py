@@ -64,7 +64,7 @@ def show_graph_injury(x_values, y_values_injured, y_values_killed):
     width = 0.35  # the width of the bars
 
     fig, ax = plt.subplots()
-    rects1 = ax.bar(x - width/2, y_values_injured, width, label='Verletzte (in 10)', color='yellow')
+    rects1 = ax.bar(x - width/2, y_values_injured, width, label='Verletzte', color='yellow')
     rects2 = ax.bar(x + width/2, y_values_killed, width, label='Todesfaelle', color='red')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
@@ -89,8 +89,8 @@ def show_graph_injury(x_values, y_values_injured, y_values_killed):
 
     fig.tight_layout()
 
-    p1 = plt.bar(x_values, y_values_killed, color=(0.92, 0.07, 0.04))
-    p2 = plt.bar(x_values, y_values_injured, bottom=y_values_killed, color=(0.90, 0.90, 0.00))
+    #p1 = plt.bar(x_values, y_values_killed, color=(0.92, 0.07, 0.04))
+    #p2 = plt.bar(x_values, y_values_injured, bottom=y_values_killed, color=(0.90, 0.90, 0.00))
 
     plt.show()
 
