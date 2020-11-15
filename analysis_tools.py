@@ -5,6 +5,11 @@ from pylab import rcParams
 import folium
 from pymongo import MongoClient
 from folium.plugins import HeatMap
+import numpy as np
+import matplotlib
+#rcParams['figure.figsize'] = 25, 13
+font = {'size'   : 18}
+matplotlib.rc('font', **font)
 
 with MongoClient('mongodb://localhost:27017/') as client:
     global database
@@ -56,19 +61,47 @@ def monthly_sum(Jahr):
 
 
 def show_graph_injury(x_values, y_values_injured, y_values_killed):
-    plt.figure(figsize=(15,10))
+    data = crashes_by_year.find_one({"_id": '2020'})['by_month']
 
-    p1 = plt.bar(x_values, y_values_killed, color=(0.92,0.07,0.04))
-    p2 = plt.bar(x_values, y_values_injured, bottom=y_values_killed, color=(0.90,0.90,0.00))
+    labels = x_values
+    y_values_injured = y_values_injured
+    y_values_killed = y_values_killed
 
-    plt.ylabel('Anzahl Unfaelle')
-    plt.title('Unfaelle pro Monat nach Art der Verletzung')
-    plt.legend((p2[0], p1[0]), ('Verletze', 'Todesfaelle'))
+    x = np.arange(len(labels))  # the label locations
+    width = 0.35  # the width of the bars
+
+    fig, ax = plt.subplots()
+    rects1 = ax.bar(x - width/2, y_values_injured, width, label='Verletzte')
+    rects2 = ax.bar(x + width/2, y_values_killed, width, label='Todesfaelle')
+
+    # Add some text for labels, title and custom x-axis tick labels, etc.
+    ax.set_ylabel('Anzahl Unfaelle')
+    ax.set_title('Unfaelle pro Monat nach Art der Verletzung')
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.legend()
+
+    def autolabel(rects):
+        """Attach a text label above each bar in *rects*, displaying its height."""
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate('{}'.format(height),
+                        xy=(rect.get_x() + rect.get_width() / 2, height),
+                        xytext=(0, 3),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha='center', va='bottom')
+
+    autolabel(rects1)
+    autolabel(rects2)
+
+    fig.tight_layout()
+
     plt.show()
+    return
 
 
 def show_graph_type(x_values, y_values_pedestrians, y_values_cyclists, y_values_motorists):
-    plt.figure(figsize=(15,10))
+    plt.figure(figsize=(25,13))
     
     p1 = plt.bar(x_values, y_values_motorists, color=(0.40,0.40,0.40))
     p2 = plt.bar(x_values, y_values_cyclists, bottom=y_values_motorists, color=(0.85,0.85,0.1))
