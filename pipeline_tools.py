@@ -23,7 +23,7 @@ def send_to_kafka(topic, limit=None):
             if not counter % 100000 and counter:
                 print(f'CSV → Kafka: Read {counter} lines from {fn}.')
         producer.close()
-        print(f'Producer for topic {topic} closed after {counter + 1} entries.')
+        print(f'Producer for topic {topic} closed after {counter - 1} entries.')
         return counter - 1
 
 
