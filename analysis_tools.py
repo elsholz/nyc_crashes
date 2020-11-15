@@ -5,15 +5,12 @@ from pylab import rcParams
 import folium
 from pymongo import MongoClient
 from folium.plugins import HeatMap
-<<<<<<< HEAD
 import numpy as np
 import matplotlib
 #rcParams['figure.figsize'] = 25, 13
 font = {'size'   : 18}
 matplotlib.rc('font', **font)
-=======
 import matplotlib.patches as mpatches
->>>>>>> 75a50e08cd8a615c539976e91bc7ea33fa400892
 
 with MongoClient('mongodb://localhost:27017/') as client:
     global database
@@ -67,7 +64,6 @@ def monthly_sum(Jahr):
 
 
 def show_graph_injury(x_values, y_values_injured, y_values_killed):
-<<<<<<< HEAD
     data = crashes_by_year.find_one({"_id": '2020'})['by_month']
 
     labels = x_values
@@ -102,27 +98,16 @@ def show_graph_injury(x_values, y_values_injured, y_values_killed):
     autolabel(rects2)
 
     fig.tight_layout()
-=======
+    
     plt.figure(figsize=(20, 11))
 
     p1 = plt.bar(x_values, y_values_killed, color=(0.92, 0.07, 0.04))
     p2 = plt.bar(x_values, y_values_injured, bottom=y_values_killed, color=(0.90, 0.90, 0.00))
->>>>>>> 75a50e08cd8a615c539976e91bc7ea33fa400892
 
     plt.show()
-    return
 
 
 def show_graph_type(x_values, y_values_pedestrians, y_values_cyclists, y_values_motorists):
-<<<<<<< HEAD
-    plt.figure(figsize=(25,13))
-    
-    p1 = plt.bar(x_values, y_values_motorists, color=(0.40,0.40,0.40))
-    p2 = plt.bar(x_values, y_values_cyclists, bottom=y_values_motorists, color=(0.85,0.85,0.1))
-    bottom_gold = [a+b for a,b in zip(y_values_cyclists, y_values_motorists)]
-    p3 = plt.bar(x_values, y_values_pedestrians, bottom=bottom_gold, color=(0.10,0.8,0.10))
-    
-=======
     plt.figure(figsize=(20, 11))
 
     p1 = plt.bar(x_values, y_values_motorists, color=(0.40, 0.40, 0.40))
@@ -130,7 +115,6 @@ def show_graph_type(x_values, y_values_pedestrians, y_values_cyclists, y_values_
     bottom_gold = [a + b for a, b in zip(y_values_cyclists, y_values_motorists)]
     p3 = plt.bar(x_values, y_values_pedestrians, bottom=bottom_gold, color=(0.10, 0.8, 0.10))
 
->>>>>>> 75a50e08cd8a615c539976e91bc7ea33fa400892
     plt.ylabel('Anzahl Unfaelle')
     plt.title('Unfaelle pro Monat nach Mobilitaetstyp')
     plt.legend((p3[0], p2[0], p1[0]), ('Fussgaenger', 'Fahrradfahrer', 'Personen in Fahrzeugen'))
