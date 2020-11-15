@@ -65,11 +65,11 @@ def show_graph_injury(x_values, y_values_injured, y_values_killed):
 
     fig, ax = plt.subplots()
     rects1 = ax.bar(x - width/2, y_values_injured, width, label='Verletzte', color='yellow')
-    rects2 = ax.bar(x + width/2, y_values_killed, width, label='Todesfaelle', color='red')
+    rects2 = ax.bar(x + width/2, y_values_killed, width, label='Todesfälle', color='red')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
-    ax.set_ylabel('Anzahl Unfaelle')
-    ax.set_title('Unfaelle pro Monat nach Art der Verletzung')
+    ax.set_ylabel('Anzahl Unfälle')
+    ax.set_title('Unfälle pro Monat nach Art der Verletzung')
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.legend()
@@ -101,9 +101,9 @@ def show_graph_type(x_values, y_values_pedestrians, y_values_cyclists, y_values_
     bottom_gold = [a + b for a, b in zip(y_values_cyclists, y_values_motorists)]
     p3 = plt.bar(x_values, y_values_pedestrians, bottom=bottom_gold, color=(0.10, 0.8, 0.10))
 
-    plt.ylabel('Anzahl Unfaelle')
-    plt.title('Unfaelle pro Monat nach Mobilitaetstyp')
-    plt.legend((p3[0], p2[0], p1[0]), ('Fussgaenger', 'Fahrradfahrer', 'Personen in Fahrzeugen'))
+    plt.ylabel('Anzahl Unfälle')
+    plt.title('Unfälle pro Monat nach Mobilitaetstyp')
+    plt.legend((p3[0], p2[0], p1[0]), ('Fußgänger', 'Fahrradfahrer', 'Personen in Fahrzeugen'))
     plt.show()
 
 
