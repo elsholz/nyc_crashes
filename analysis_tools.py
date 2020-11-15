@@ -131,8 +131,10 @@ def show_line_chart(damage='killed', kinds=['pedestrians', 'motorists', 'cyclist
     green = mpatches.Patch(color='green', label='The red data')
     red = mpatches.Patch(color='red', label='The red data')
     gray = mpatches.Patch(color='gray', label='The red data')
-
-    plt.legend(handles=[red, gray, green], labels=['pedestrians', 'motorists', 'cyclists'])
+    if len(kinds) == 3:
+        plt.legend(handles=[red, gray, green], labels=['pedestrians', 'motorists', 'cyclists'])
+    else:
+        plt.legend(handles=[red, green], labels=['pedestrians', 'cyclists'])
     plt.show()
 
 
