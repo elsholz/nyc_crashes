@@ -87,7 +87,7 @@ def show_graph_injury(x_values, y_values_injured, y_values_killed):
     autolabel(rects1)
     autolabel(rects2)
 
-    fig.tight_layout()
+    #fig.tight_layout()
 
     #p1 = plt.bar(x_values, y_values_killed, color=(0.92, 0.07, 0.04))
     #p2 = plt.bar(x_values, y_values_injured, bottom=y_values_killed, color=(0.90, 0.90, 0.00))
