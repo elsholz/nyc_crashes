@@ -15,8 +15,8 @@ with MongoClient('mongodb://localhost:27017/') as client:
     crashes_by_year = database.crashes_by_year
 
 
-def yearly(Year):
-    data = crashes_by_year.find_one({"_id": Year})['by_month']
+def monthly(Jahr):
+    data = crashes_by_year.find_one({"_id": Jahr})['by_month']
     
     x_values = data.keys()
     y_values_injured = []
@@ -33,8 +33,8 @@ def yearly(Year):
     return
 
 
-def yearly_sum(Year):
-    data = crashes_by_year.find_one({"_id": Year})['by_month']
+def monthly_sum(Jahr):
+    data = crashes_by_year.find_one({"_id": Jahr})['by_month']
     
     x_values = data.keys()
     y_values_pedestrians = []
@@ -77,7 +77,7 @@ def show_graph_type(x_values, y_values_pedestrians, y_values_cyclists, y_values_
     
     plt.ylabel('Anzahl Unfaelle')
     plt.title('Unfaelle pro Monat nach Art')
-    plt.legend((p3[0], p2[0], p1[0]), ('Fußgaenger', 'Fahrradfahrer', 'Personen in Fahrzeugen'))
+    plt.legend((p3[0], p2[0], p1[0]), ('Fussgaenger', 'Fahrradfahrer', 'Personen in Fahrzeugen'))
     plt.show()
 
 
