@@ -58,8 +58,12 @@ def yearly_sum(Year):
 def show_graph_injury(x_values, y_values_injured, y_values_killed):
     plt.figure(figsize=(15,10))
 
-    plt.bar(x_values, y_values_killed, color=(0.92,0.07,0.04))
-    plt.bar(x_values, y_values_injured, bottom=y_values_killed, color=(0.90,0.90,0.00))
+    p1 = plt.bar(x_values, y_values_killed, color=(0.92,0.07,0.04))
+    p2 = plt.bar(x_values, y_values_injured, bottom=y_values_killed, color=(0.90,0.90,0.00))
+
+    plt.ylabel('Anzahl Unfaelle')
+    plt.title('Unfaelle pro Monat nach Art')
+    plt.legend((p2[0], p1[0]), ('Verletze', 'Todesfaelle'))
     plt.show()
 
 
@@ -73,7 +77,7 @@ def show_graph_type(x_values, y_values_pedestrians, y_values_cyclists, y_values_
     
     plt.ylabel('Anzahl Unfaelle')
     plt.title('Unfaelle pro Monat nach Art')
-    plt.legend((p3[0], p2[0], p1[0]), ('Pedestrians', 'Cyclists', 'Motorists'))
+    plt.legend((p3[0], p2[0], p1[0]), ('Fußgaenger', 'Fahrradfahrer', 'Personen in Fahrzeugen'))
     plt.show()
 
 
