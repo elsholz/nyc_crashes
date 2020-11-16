@@ -1,8 +1,6 @@
 from pymongo import MongoClient
 from kafka import KafkaConsumer, KafkaProducer
 from datetime import datetime
-import pandas as pd
-import re
 from pathlib import Path
 import csv
 
@@ -49,7 +47,7 @@ def process_topic(topic, types, limit=None):
                 print(f'Kafka → MongoDB: Read {counter} lines from Kafka topic {topic}.')
             for line in csv.reader([row]):
                 res = {}
-                for idx, (db_field, field_type) in enumerate(types.items()):
+                for (idx, db_field), field_type in types.items():
                     try:
                         if row_data := line[idx]:
                             res[db_field] = field_type.__call__(row_data) if not isinstance(row_data,
@@ -64,11 +62,11 @@ def process_topic(topic, types, limit=None):
                 try:
                     if topic == 'crashes':
                         try:
-                            res['vehicles'] = list(db['vehicles'].find({'collision_id': {'$eq': res['_id']}}))
+                            res['vehicles'] = list(db['vehicles'].find({'collision_id': {'$eq': res['_id']}}, {'_id': 1}))
                         except Exception as e:
                             errors[type(e)] = errors.get(type(e), 0) + 1
                         try:
-                            res['persons'] = list(db['persons'].find({'collision_id': {'$eq': res['_id']}}))
+                            res['persons'] = list(db['persons'].find({'collision_id': {'$eq': res['_id']}}, {'_id': 1}))
                         except Exception as e:
                             errors[type(e)] = errors.get(type(e), 0) + 1
                         try:
