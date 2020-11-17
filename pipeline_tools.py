@@ -50,8 +50,9 @@ def process_topic(topic, types, limit=None):
                 for (idx, db_field), field_type in types.items():
                     try:
                         if row_data := line[idx]:
-                            res[db_field] = field_type.__call__(row_data) if not isinstance(row_data,
-                                                                                            field_type) else row_data
+                            res[db_field] = field_type.__call__(row_data) if not isinstance(
+                                row_data, field_type
+                            ) else row_data
                         else:
                             res[db_field] = None
                     except Exception as e:
@@ -62,11 +63,15 @@ def process_topic(topic, types, limit=None):
                 try:
                     if topic == 'crashes':
                         try:
-                            res['vehicles'] = list(db['vehicles'].find({'collision_id': {'$eq': res['_id']}}, {'_id': 1}))
+                            res['vehicles'] = list(
+                                db['vehicles'].find({'collision_id': {'$eq': res['_id']}}, {'_id': 1})
+                            )
                         except Exception as e:
                             errors[type(e)] = errors.get(type(e), 0) + 1
                         try:
-                            res['persons'] = list(db['persons'].find({'collision_id': {'$eq': res['_id']}}, {'_id': 1}))
+                            res['persons'] = list(db['persons'].find(
+                                {'collision_id': {'$eq': res['_id']}}, {'_id': 1})
+                            )
                         except Exception as e:
                             errors[type(e)] = errors.get(type(e), 0) + 1
                         try:
@@ -106,7 +111,6 @@ def aggregate_data():
             cm = crash['month']
             cd = crash['day']
 
-
             years[cy] = years.get(cy, [])
             years[cy].append((cm, cd, {
                 kind:
@@ -138,5 +142,3 @@ def aggregate_data():
                     } for kind in kinds
                 }
             })
-
-
