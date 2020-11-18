@@ -64,8 +64,8 @@ def show_graph_injury(x_values, y_values_injured, y_values_killed):
     width = 0.35  # the width of the bars
 
     fig, ax = plt.subplots()
-    rects1 = ax.bar(x - width/2, y_values_injured, width, label='Verletzte', color='yellow')
-    rects2 = ax.bar(x + width/2, y_values_killed, width, label='Todesfälle', color='red')
+    rects1 = ax.bar(x - width / 2, y_values_injured, width, label='Verletzte', color='yellow')
+    rects2 = ax.bar(x + width / 2, y_values_killed, width, label='Todesfälle', color='red')
 
     # Add some text for labels, title and custom x-axis tick labels, etc.
     ax.set_ylabel('Anzahl Unfälle')
@@ -87,10 +87,10 @@ def show_graph_injury(x_values, y_values_injured, y_values_killed):
     autolabel(rects1)
     autolabel(rects2)
 
-    #fig.tight_layout()
+    # fig.tight_layout()
 
-    #p1 = plt.bar(x_values, y_values_killed, color=(0.92, 0.07, 0.04))
-    #p2 = plt.bar(x_values, y_values_injured, bottom=y_values_killed, color=(0.90, 0.90, 0.00))
+    # p1 = plt.bar(x_values, y_values_killed, color=(0.92, 0.07, 0.04))
+    # p2 = plt.bar(x_values, y_values_injured, bottom=y_values_killed, color=(0.90, 0.90, 0.00))
 
     plt.show()
 
@@ -102,8 +102,8 @@ def show_graph_type(x_values, y_values_pedestrians, y_values_cyclists, y_values_
     p3 = plt.bar(x_values, y_values_pedestrians, bottom=bottom_gold, color=(0.10, 0.8, 0.10))
 
     plt.ylabel('Anzahl Unfälle')
-    plt.title('Unfälle pro Monat nach Mobilitaetstyp')
-    plt.legend((p3[0], p2[0], p1[0]), ('Fußgänger', 'Fahrradfahrer', 'Personen in Fahrzeugen'))
+    plt.title('Unfälle pro Monat nach Verkehrsteilnehmern')
+    plt.legend((p3[0], p2[0], p1[0]), ('Fußgänger', 'Fahrradfahrer', 'Kraftfahrer'))
     plt.show()
 
 
@@ -131,10 +131,18 @@ def show_line_chart(damage='killed', kinds=['pedestrians', 'motorists', 'cyclist
     green = mpatches.Patch(color='green', label='The red data')
     red = mpatches.Patch(color='red', label='The red data')
     gray = mpatches.Patch(color='gray', label='The red data')
-    if len(kinds) == 3:
-        plt.legend(handles=[red, gray, green], labels=['pedestrians', 'motorists', 'cyclists'])
-    else:
-        plt.legend(handles=[red, green], labels=['pedestrians', 'cyclists'])
+    plt.legend(
+        handles=[{'pedestrians': red, 'motorists': gray, 'cyclists': green}[k] for k in kinds],
+        labels=kinds
+    )
+
+    d = {
+        'killed': 'Victims Killed',
+        'injured': 'Victims Injured'
+    }
+    plt.title(f'Seasonal Line Chart: {d[damage]}.')
+    plt.ylabel(d[damage])
+
     plt.show()
 
 
@@ -153,14 +161,18 @@ def show_stacked_victims():
         colors=['yellow', 'green', 'lightgray']
     )
 
-    # plt.legend(loc=2, fontsize='large')
+    # plt.legend(loc=2, fontsize='large'
+    plt.title('Yearly Accident Victims')
+    plt.ylabel('Killed or Injured')
     plt.legend()
     plt.show()
 
 
 def make_map():
-    all_inj, all_kil, ped_inj, ped_kil, \
-    cyc_inj, cyc_kil, mot_inj, mot_kil = [[]] * 8
+    all_inj, all_kil = [], []
+    ped_inj, ped_kil = [], []
+    cyc_inj, cyc_kil = [], []
+    mot_inj, mot_kil = [], []
 
     layer_conf = {'zoom_start': 10.5, 'min_zoom': 10, 'max_zoom': 20}
     base_map = folium.Map(location=[40.73, -73.8], **layer_conf)
@@ -188,20 +200,20 @@ def make_map():
                     'cyclists_killed', 'cyclists_injured',
                     'motorists_killed', 'motorists_injured'
                 ], [
-                    all_inj, all_kil, ped_inj, ped_kil,
-                    cyc_inj, cyc_kil, mot_inj, mot_kil
+                    all_kil, all_inj, ped_kil, ped_inj,
+                    cyc_kil, cyc_inj, mot_kil, mot_inj,
                 ]):
                     if crash[atr]:
                         l.append(coords)
 
     HeatMap(name='All crashes with injuries', data=all_inj, radius=10, show=False).add_to(base_map)
-    HeatMap(name='All crashes with fatalities', data=all_kil, radius=10, show=False).add_to(base_map)
+    HeatMap(name='All crashes with fatalities', data=all_kil, radius=15, show=False).add_to(base_map)
     HeatMap(name='Cyclists injured', data=cyc_inj, radius=10, show=False).add_to(base_map)
-    HeatMap(name='Cyclists killed', data=cyc_kil, radius=10, show=False).add_to(base_map)
+    HeatMap(name='Cyclists killed', data=cyc_kil, radius=20, show=False).add_to(base_map)
     HeatMap(name='Pedestrians injured', data=ped_inj, radius=10, show=False).add_to(base_map)
-    HeatMap(name='Pedestrians killed', data=ped_kil, radius=10, show=False).add_to(base_map)
+    HeatMap(name='Pedestrians killed', data=ped_kil, radius=20, show=False).add_to(base_map)
     HeatMap(name='Motorists injured', data=mot_inj, radius=10, show=False).add_to(base_map)
-    HeatMap(name='Motorists killed', data=mot_kil, radius=10, show=False).add_to(base_map)
+    HeatMap(name='Motorists killed', data=mot_kil, radius=20, show=False).add_to(base_map)
 
     for layer in ['Stamen Terrain', 'Stamen Toner', 'Stamen Water Color']:
         folium.TileLayer(layer, **layer_conf).add_to(base_map)

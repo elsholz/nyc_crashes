@@ -61,7 +61,7 @@ schemas = {
         # (8, 'cross_street_name'): str,
         # (9, 'off_street_name'): str,
         (10, 'persons_injured'): int,
-        (10, 'persons_killed'): int,
+        (11, 'persons_killed'): int,
         (12, 'pedestrians_injured'): int,
         (13, 'pedestrians_killed'): int,
         (14, 'cyclists_injured'): int,
